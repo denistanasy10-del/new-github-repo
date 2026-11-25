@@ -6,7 +6,7 @@ FrameFlow
 
 FrameFlow is an open-source photo organization tool designed to turn messy folders and large photo dumps into structured, searchable collections. It helps creators quickly review, group, filter, and organize images—without moving, modifying, or deleting originals unless the user explicitly chooses to.
 
-Project status: Early concept / planned development. Features and commands described below are proposed and may not be implemented yet.
+Project status: Early development. The CLI supports local scanning, exact duplicate detection, and preview-first date-based copying. The desktop application, image metadata extraction, and other features below are planned.
 
 Why FrameFlow?
 
@@ -40,7 +40,7 @@ Smart organization
 
 Duplicate and similarity detection
 
-•	Detect exact duplicates using file hashes.
+•	Detect exact duplicates using SHA-256 file hashes.
 •	Explore near-duplicate detection using perceptual image hashes.
 •	Identify image sequences and visually similar shots.
 •	Keep the user in control when deciding which versions to retain.
@@ -92,12 +92,12 @@ The initial implementation is planned around a cross-platform desktop applicatio
 •	Image processing: Pillow
 •	Duplicate detection: SHA-256 for exact duplicates; perceptual hashing for similarity experiments
 •	Local catalog: SQLite
-•	Testing: pytest
+•	Testing: Python unittest
 •	Packaging: PyInstaller or platform-specific packaging tools
 
 Technology choices may evolve as development and performance testing progress.
 
-Architecture
+Planned architecture
 
 FrameFlow is planned as a modular application with clear boundaries between the interface, catalog, scanning, analysis, and file operations.
 
@@ -123,17 +123,27 @@ FrameFlow is planned as a modular application with clear boundaries between the 
 │            Non-destructive operation logic                 │
 └────────────────────────────────────────────────────────────┘
 
-Proposed repository structure
+Current repository structure
+
+.
+├── .github/workflows/tests.yml
+├── README.md
+├── pyproject.toml
+├── src/frameflow/
+│   ├── analysis.py
+│   ├── cli.py
+│   └── scanner.py
+└── tests/
+    ├── test_analysis.py
+    ├── test_cli.py
+    └── test_scanner.py
+
+The desktop application and local SQLite catalog remain planned.
+
+Proposed future architecture
 
 frameflow/
-├── README.md
-├── LICENSE
-├── CONTRIBUTING.md
-├── CODE_OF_CONDUCT.md
 ├── pyproject.toml
-├── docs/
-│   ├── architecture.md
-│   └── roadmap.md
 ├── src/
 │   └── frameflow/
 │       ├── __init__.py
@@ -160,11 +170,40 @@ frameflow/
     ├── test_metadata.py
     └── test_organizer.py
 
-This structure is an architectural proposal and may change as the project evolves.
+This future structure is an architectural proposal and may change as the project evolves.
 
 Installation
 
-Installation instructions will become available once the first runnable release is published.
+Install the project locally with Python 3.11 or newer:
+
+```bash
+python -m pip install -e .
+```
+
+Scan a folder recursively. FrameFlow reads files locally and never uploads or alters source images:
+
+```bash
+frameflow scan /path/to/photos
+```
+
+Find byte-identical images:
+
+```bash
+frameflow duplicates /path/to/photos
+```
+
+Preview a copy-based organization by each file's modified date, then explicitly apply it:
+
+```bash
+frameflow organize /path/to/photos /path/to/organized
+frameflow organize /path/to/photos /path/to/organized --apply
+```
+
+Run the test suite with the Python standard library:
+
+```bash
+python -m unittest discover -s tests
+```
 
 Planned prerequisites
 
@@ -172,7 +211,7 @@ Planned prerequisites
 •	Git
 •	Supported desktop operating system (initial platform support will be documented during development)
 
-Development setup (planned)
+Development setup
 
 git clone https://github.com/USERNAME/frameflow.git
 cd frameflow
@@ -189,11 +228,11 @@ Windows
 
 .venv\Scripts\activate
 
-Install development dependencies once the project configuration is available:
+Install the project in editable mode:
 
-pip install -e ".[dev]"
+pip install -e .
 
-Launch command and packaging instructions will be added after the initial application entry point is implemented.
+Organization uses filesystem modification dates, not EXIF capture dates. It copies rather than moves, keeps originals, chooses collision-safe names, and refuses to overwrite existing files. The default organization command is preview-only. Desktop UI and EXIF metadata extraction are not implemented yet.
 
 Privacy and file safety
 
@@ -212,11 +251,12 @@ Roadmap
 
 Phase 1 — Foundation
 
-☐	Establish project structure and development tooling.
+☑	Establish project structure and development tooling.
 ☐	Build a cross-platform desktop shell.
-☐	Implement folder scanning.
+☑	Implement folder scanning.
 ☐	Create a local SQLite catalog.
-☐	Extract basic image properties and metadata.
+☑	Extract basic file properties (size and modification time).
+☐	Extract image metadata.
 
 Phase 2 — Fast review
 
@@ -234,7 +274,7 @@ Phase 3 — Organization
 
 Phase 4 — Duplicate intelligence
 
-☐	Exact duplicate detection.
+☑	Exact duplicate detection.
 ☐	Perceptual similarity experiments.
 ☐	Similar-image review groups.
 ☐	User-controlled decisions for duplicate candidates.
@@ -243,7 +283,7 @@ Phase 5 — Release and community
 
 ☐	Cross-platform packaging evaluation.
 ☐	Documentation and accessibility review.
-☐	Automated test coverage for critical file operations.
+☑	Automated test coverage for critical file operations.
 ☐	Publish an initial alpha release.
 ☐	Gather feedback and prioritize community contributions.
 
