@@ -3,6 +3,7 @@
 import argparse
 from pathlib import Path
 
+from frameflow import __version__
 from frameflow.analysis import (
     copy_organization,
     find_exact_duplicates,
@@ -13,7 +14,12 @@ from frameflow.scanner import scan_folder
 
 def main() -> None:
     parser = argparse.ArgumentParser(
-        description="Review and safely organize local photo collections."
+        prog="frameflow",
+        description="Find and safely organize images in local photo collections.",
+        epilog="All commands run locally. Source files are never moved or deleted.",
+    )
+    parser.add_argument(
+        "--version", action="version", version=f"%(prog)s {__version__}"
     )
     commands = parser.add_subparsers(dest="command", required=True)
 
@@ -55,8 +61,9 @@ def _scan(folder: Path) -> None:
     root = Path(folder).expanduser().resolve()
     total_bytes = sum(image.size_bytes for image in images)
     for image in images:
-        print(f"{image.path.relative_to(root)}\t{image.size_bytes} bytes")
-    print(f"Found {len(images)} image(s), {total_bytes} bytes total.")
+        print(f"{image.path.relative_to(root)}\t{_format_size(image.size_bytes)}")
+    image_label = "image" if len(images) == 1 else "images"
+    print(f"\nFound {len(images)} {image_label} ({_format_size(total_bytes)} total).")
 
 
 def _duplicates(folder: Path) -> None:
@@ -64,11 +71,12 @@ def _duplicates(folder: Path) -> None:
     if not groups:
         print("No exact duplicates found.")
         return
-    for group in groups:
-        print(f"SHA-256 {group.sha256}")
+    root = Path(folder).expanduser().resolve()
+    for index, group in enumerate(groups, start=1):
+        print(f"Duplicate group {index} | SHA-256 {group.sha256}")
         for image in group.files:
-            print(f"  {image.path}\t{image.size_bytes} bytes")
-    print(f"Found {len(groups)} duplicate group(s). No files were changed.")
+            print(f"  {image.path.relative_to(root)}\t{_format_size(image.size_bytes)}")
+    print(f"\nFound {len(groups)} duplicate group(s). No files were changed.")
 
 
 def _organize(folder: Path, destination: Path, apply: bool) -> None:
@@ -77,7 +85,10 @@ def _organize(folder: Path, destination: Path, apply: bool) -> None:
         print("No supported images found.")
         return
     for item in plan:
-        print(f"{item.source} -> {item.destination}")
+        print(
+            f"{item.source.relative_to(Path(folder).expanduser().resolve())}"
+            f"  ->  {item.destination}"
+        )
     if not apply:
         print(
             f"Preview only: {len(plan)} file(s). "
@@ -86,6 +97,17 @@ def _organize(folder: Path, destination: Path, apply: bool) -> None:
         return
     copied = copy_organization(plan)
     print(f"Copied {len(copied)} file(s). Originals were kept.")
+
+
+def _format_size(size_bytes: int) -> str:
+    size = float(size_bytes)
+    for unit in ("B", "KB", "MB", "GB", "TB"):
+        if size < 1000 or unit == "TB":
+            if unit == "B":
+                return f"{size_bytes} B"
+            return f"{size:.1f} {unit}"
+        size /= 1000
+    return f"{size_bytes} B"
 
 
 if __name__ == "__main__":

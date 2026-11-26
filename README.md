@@ -1,344 +1,137 @@
-FrameFlow
+<div align="center">
 
-<p align="center">
-  <strong>Spend less time sorting. Spend more time creating.</strong>
-</p>
+# FrameFlow
 
-FrameFlow is an open-source photo organization tool designed to turn messy folders and large photo dumps into structured, searchable collections. It helps creators quickly review, group, filter, and organize images—without moving, modifying, or deleting originals unless the user explicitly chooses to.
+### Spend less time sorting. Spend more time creating.
 
-Project status: Early development. The CLI supports local scanning, exact duplicate detection, and preview-first date-based copying. The desktop application, image metadata extraction, and other features below are planned.
+Local-first tools for finding, reviewing, and safely organizing photo collections.
 
-Why FrameFlow?
+[![Tests](https://github.com/denistanasy10-del/new-github-repo/actions/workflows/tests.yml/badge.svg)](https://github.com/denistanasy10-del/new-github-repo/actions/workflows/tests.yml)
+[![Python 3.11+](https://img.shields.io/badge/python-3.11%2B-3776AB?logo=python&logoColor=white)](https://www.python.org/)
+[![License: MIT](https://img.shields.io/badge/license-MIT-2ea44f.svg)](LICENSE)
 
-After a shoot, trip, event, or everyday capture session, photographers can end up with hundreds or thousands of files that need to be reviewed. Finding the best shots, separating images by date or camera, spotting duplicates, and building a clean folder structure can consume more time than the creative work itself.
+</div>
 
-FrameFlow aims to make that process fast, predictable, and user-controlled.
+FrameFlow is a small, privacy-minded command-line app for taking the first steps toward a tidy photo library. It scans image folders, finds byte-for-byte duplicates, and previews date-based organization before copying anything.
 
-Core principles
+> **Early release:** The CLI described here is implemented. A desktop app, EXIF-based sorting, thumbnails, and a persistent catalog are not available yet.
 
-•	Local-first: Your photo library stays on your device. Cloud upload is not required.
-•	Non-destructive by default: Original files are never edited or deleted as part of automatic organization.
-•	Fast review: Designed for large folders and keyboard-friendly workflows.
-•	Transparent automation: Every proposed grouping or action can be reviewed before it is applied.
-•	Open and extensible: A modular architecture allows new sorting rules and analysis features to be added.
+## What it can do
 
-Planned features
+- **Scan locally** for common image and camera RAW file extensions, recursively.
+- **Find exact duplicates** with streaming SHA-256 hashes. Files are never removed.
+- **Preview organization** into folders by file modification date.
+- **Copy on confirmation** with collision-safe names. The original library stays untouched.
+- **Keep you in control:** preview is the default, source/destination overlap is rejected, and files changed after preview are not copied.
+- **Stay lightweight:** Python 3.11+, no runtime dependencies, and no network access.
 
-Rapid photo triage
+## Get started
 
-•	Browse large collections in a streamlined review interface.
-•	Mark images as keep, reject, favorite, or review later.
-•	Navigate and rate images with keyboard shortcuts.
-•	Filter by file type, capture date, dimensions, camera metadata, and rating.
+Install from a checkout:
 
-Smart organization
+```bash
+git clone https://github.com/denistanasy10-del/new-github-repo.git
+cd new-github-repo
+python -m venv .venv
+```
 
-•	Group photos by capture date, time range, camera, lens, file type, and user-defined rules.
-•	Preview folder structures before applying changes.
-•	Generate suggested collections for events, trips, and shoots.
-•	Export organization plans for review.
+Activate the environment:
 
-Duplicate and similarity detection
+```bash
+# macOS / Linux
+source .venv/bin/activate
+```
 
-•	Detect exact duplicates using SHA-256 file hashes.
-•	Explore near-duplicate detection using perceptual image hashes.
-•	Identify image sequences and visually similar shots.
-•	Keep the user in control when deciding which versions to retain.
+```powershell
+# Windows PowerShell
+.venv\Scripts\Activate.ps1
+```
 
-Metadata-aware browsing
-
-•	Read supported EXIF metadata, including capture date, camera model, lens, exposure information, and image dimensions.
-•	Search and filter using available metadata.
-•	Clearly indicate when metadata is missing or unavailable.
-
-Safe file operations
-
-•	Preview rename and move operations before execution.
-•	Avoid overwriting files by using collision-safe naming.
-•	Keep an operation log where possible.
-•	Support undo for reversible organization operations where feasible.
-
-Workflow presets
-
-•	Create reusable sorting presets for weddings, events, travel, studio sessions, product photography, and personal archives.
-•	Customize rules instead of relying on one fixed folder structure.
-
-Example workflow
-
-1.	Select a folder containing images.
-2.	Let FrameFlow scan file names, file properties, and available metadata.
-3.	Review suggested groups, duplicates, and sorting options.
-4.	Adjust the rules or manually review selected images.
-5.	Preview the resulting folder structure and file operations.
-6.	Apply the changes only after confirmation.
-
-Design goals
-
-Goal	Approach
-Speed	Efficient scanning, caching, and responsive browsing
-Safety	Non-destructive defaults and confirmation before file operations
-Privacy	Local processing by default; no required cloud account
-Clarity	Explain why an image was grouped or flagged
-Flexibility	Configurable rules and workflow presets
-Accessibility	Keyboard navigation and clear interface states
-
-Proposed technology stack
-
-The initial implementation is planned around a cross-platform desktop application.
-
-•	Language: Python
-•	Desktop UI: PySide6 / Qt
-•	Image metadata: ExifTool integration or compatible metadata libraries
-•	Image processing: Pillow
-•	Duplicate detection: SHA-256 for exact duplicates; perceptual hashing for similarity experiments
-•	Local catalog: SQLite
-•	Testing: Python unittest
-•	Packaging: PyInstaller or platform-specific packaging tools
-
-Technology choices may evolve as development and performance testing progress.
-
-Planned architecture
-
-FrameFlow is planned as a modular application with clear boundaries between the interface, catalog, scanning, analysis, and file operations.
-
-┌──────────────────────────────────────────────────────────────┐
-│                      FrameFlow UI                          │
-│          Browse · Review · Filter · Organize               │
-└──────────────────────────────┬───────────────────────────────┘
-                               │
-┌──────────────────────────────▼───────────────────────────────┐
-│                    Application Layer                       │
-│       Workflows · Commands · Preferences · Presets          │
-└──────────────┬──────────────────────────────┬───────────────┘
-               │                             │
-┌──────────────▼──────────────┐  ┌───────────▼───────────────┐
-│      Media Catalog        │  │     Analysis Engine       │
-│ SQLite · Metadata · Cache │  │ Hashes · Similarity ·     │
-│                           │  │ Rule-based grouping       │
-└──────────────┬──────────────┘  └───────────┬───────────────┘
-               │                             │
-┌──────────────▼─────────────────────────────▼───────────────┐
-│                   File System Layer                       │
-│       Scan · Preview · Rename · Move · Export             │
-│            Non-destructive operation logic                 │
-└────────────────────────────────────────────────────────────┘
-
-Current repository structure
-
-.
-├── .github/workflows/tests.yml
-├── README.md
-├── pyproject.toml
-├── src/frameflow/
-│   ├── analysis.py
-│   ├── cli.py
-│   └── scanner.py
-└── tests/
-    ├── test_analysis.py
-    ├── test_cli.py
-    └── test_scanner.py
-
-The desktop application and local SQLite catalog remain planned.
-
-Proposed future architecture
-
-frameflow/
-├── pyproject.toml
-├── src/
-│   └── frameflow/
-│       ├── __init__.py
-│       ├── app.py
-│       ├── ui/
-│       │   ├── main_window.py
-│       │   └── review_view.py
-│       ├── catalog/
-│       │   ├── database.py
-│       │   └── models.py
-│       ├── scanner/
-│       │   ├── file_scanner.py
-│       │   └── metadata_reader.py
-│       ├── analysis/
-│       │   ├── duplicate_detection.py
-│       │   └── grouping_rules.py
-│       ├── organizer/
-│       │   ├── operation_preview.py
-│       │   └── file_operations.py
-│       └── settings/
-│           └── preferences.py
-└── tests/
-    ├── test_scanner.py
-    ├── test_metadata.py
-    └── test_organizer.py
-
-This future structure is an architectural proposal and may change as the project evolves.
-
-Installation
-
-Install the project locally with Python 3.11 or newer:
+Install FrameFlow:
 
 ```bash
 python -m pip install -e .
 ```
 
-Scan a folder recursively. FrameFlow reads files locally and never uploads or alters source images:
+## Commands
+
+### Scan a folder
 
 ```bash
-frameflow scan /path/to/photos
+frameflow scan ~/Pictures
 ```
 
-Find byte-identical images:
+Lists supported files and reports the total image count and size. The scan is read-only and does not follow symbolic links.
+
+### Find exact duplicates
 
 ```bash
-frameflow duplicates /path/to/photos
+frameflow duplicates ~/Pictures
 ```
 
-Preview a copy-based organization by each file's modified date, then explicitly apply it:
+Only files with matching SHA-256 hashes are reported as duplicates. Similar-looking photos and resized or re-encoded copies are not detected.
+
+### Preview, then copy into date folders
 
 ```bash
-frameflow organize /path/to/photos /path/to/organized
-frameflow organize /path/to/photos /path/to/organized --apply
+# Preview only; does not create or change files
+frameflow organize ~/Pictures ~/Pictures-organized
+
+# Explicitly copy the planned files; originals are kept
+frameflow organize ~/Pictures ~/Pictures-organized --apply
 ```
 
-Run the test suite with the Python standard library:
+The destination is grouped by each image's **file modification date**, not its EXIF capture date. If names collide, FrameFlow adds a numbered suffix instead of overwriting. If a source file changes after the preview, the copy is stopped.
+
+### See all options
 
 ```bash
-python -m unittest discover -s tests
+frameflow --help
+frameflow organize --help
+frameflow --version
 ```
 
-Planned prerequisites
+## Supported extensions
 
-•	Python 3.11+
-•	Git
-•	Supported desktop operating system (initial platform support will be documented during development)
+JPEG, PNG, GIF, BMP, TIFF, WebP, HEIC, and common RAW extensions: ARW, CR2, CR3, DNG, NEF, ORF, PEF, RAF, RW2, and SRW.
 
-Development setup
+FrameFlow currently identifies files by extension. It does not decode, validate, generate thumbnails, or read image metadata.
 
-git clone https://github.com/USERNAME/frameflow.git
-cd frameflow
+## Safety and privacy
 
-python -m venv .venv
+- Everything runs on your computer; photos and metadata are not uploaded.
+- Scanning and duplicate detection never change files.
+- Organization is a preview by default and copies only when `--apply` is supplied.
+- Original files are never moved or deleted.
+- Existing destination files are not overwritten.
+- Symbolic links are skipped during scans.
 
-Activate the environment:
+Keep a backup before applying bulk file operations, as with any photo workflow.
 
-macOS / Linux
+## Development
 
-source .venv/bin/activate
+```bash
+python -m pip install -e ".[dev]"
+python -m unittest discover -s tests -v
+ruff check src tests
+```
 
-Windows
+The test suite uses Python's standard library; Ruff checks code style. GitHub Actions runs tests on Python 3.11, 3.12, and 3.13 across Ubuntu, macOS, and Windows.
 
-.venv\Scripts\activate
+See [CONTRIBUTING.md](CONTRIBUTING.md) for the development and pull request workflow.
 
-Install the project in editable mode:
+## Roadmap
 
-pip install -e .
+The current release is intentionally focused on safe file discovery and organization. Potential next steps:
 
-Organization uses filesystem modification dates, not EXIF capture dates. It copies rather than moves, keeps originals, chooses collision-safe names, and refuses to overwrite existing files. The default organization command is preview-only. Desktop UI and EXIF metadata extraction are not implemented yet.
+- EXIF capture-date and camera metadata
+- A local searchable catalog
+- Thumbnail review and keyboard-first photo triage
+- Similarity detection for near-duplicate images
+- A cross-platform desktop interface
 
-Privacy and file safety
+These are ideas, not promises or currently available features. Suggestions and focused contributions are welcome via [GitHub Issues](https://github.com/denistanasy10-del/new-github-repo/issues).
 
-FrameFlow is intended to work with personal and professional media libraries, which can contain sensitive information.
+## License
 
-The project is guided by these safeguards:
-
-•	No mandatory cloud upload.
-•	No automatic destructive actions.
-•	Preview file operations before applying them.
-•	Preserve source files during scanning and analysis.
-•	Make automated recommendations reviewable.
-•	Document any optional network-connected functionality clearly.
-
-Roadmap
-
-Phase 1 — Foundation
-
-☑	Establish project structure and development tooling.
-☐	Build a cross-platform desktop shell.
-☑	Implement folder scanning.
-☐	Create a local SQLite catalog.
-☑	Extract basic file properties (size and modification time).
-☐	Extract image metadata.
-
-Phase 2 — Fast review
-
-☐	Build thumbnail grid and image preview.
-☐	Add keyboard-first photo triage.
-☐	Implement favorites, review status, and filtering.
-☐	Add responsive catalog updates during scanning.
-
-Phase 3 — Organization
-
-☐	Add configurable grouping rules.
-☐	Preview folder structure and rename operations.
-☐	Implement safe move and rename workflows.
-☐	Add collision handling and operation history.
-
-Phase 4 — Duplicate intelligence
-
-☑	Exact duplicate detection.
-☐	Perceptual similarity experiments.
-☐	Similar-image review groups.
-☐	User-controlled decisions for duplicate candidates.
-
-Phase 5 — Release and community
-
-☐	Cross-platform packaging evaluation.
-☐	Documentation and accessibility review.
-☑	Automated test coverage for critical file operations.
-☐	Publish an initial alpha release.
-☐	Gather feedback and prioritize community contributions.
-
-Roadmap items are goals, not release commitments.
-
-Contributing
-
-Contributions, ideas, bug reports, documentation improvements, and thoughtful feedback are welcome.
-
-Before contributing:
-
-1.	Check existing issues to avoid duplicate work.
-2.	Open an issue to discuss larger changes or new features.
-3.	Keep pull requests focused and explain the problem they solve.
-4.	Add or update tests for behavior changes.
-5.	Update documentation when workflows or configuration change.
-
-Areas where contributions would be valuable
-
-•	User experience and accessibility
-•	Cross-platform compatibility
-•	Image metadata support
-•	Performance and memory optimization
-•	Duplicate detection research
-•	Sorting rules and workflow presets
-•	Documentation and translations
-•	Automated testing
-
-Please be respectful and constructive in discussions. The goal is to build a tool that is useful to photographers and creators with different workflows and levels of technical experience.
-
-Reporting issues
-
-When opening an issue, include:
-
-•	Operating system and version
-•	FrameFlow version or commit, if available
-•	Steps to reproduce the issue
-•	Expected behavior
-•	Actual behavior
-•	Relevant logs or screenshots (remove private information)
-
-Never upload private photographs or sensitive metadata unless you have intentionally reviewed and consented to sharing them.
-
-Community and discussions
-
-Community channels will be established as the project matures. Until then, use the repository's GitHub Issues for bug reports, feature requests, and development discussions.
-
-License
-
-FrameFlow is intended to be released under the MIT License. The license will apply once the repository's LICENSE file is added and confirmed.
-
-Project vision
-
-The best photo workflow is one that gets out of the way.
-
-FrameFlow aims to transform the overwhelming first step of managing a photo collection into a simple, fast, and intuitive process—so creators can spend less time searching through files and more time making something meaningful.
-
-Sort less. Create more.
+FrameFlow is available under the [MIT License](LICENSE).

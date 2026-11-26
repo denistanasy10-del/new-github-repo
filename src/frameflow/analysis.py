@@ -1,12 +1,12 @@
 """Content-based analysis for photo collections."""
 
-from dataclasses import dataclass
-from datetime import datetime
 import hashlib
 import os
-from pathlib import Path
 import shutil
 import tempfile
+from dataclasses import dataclass
+from datetime import datetime
+from pathlib import Path
 
 from frameflow.scanner import ImageFile, scan_folder
 
@@ -115,13 +115,15 @@ def copy_organization(plan: list[PlannedCopy]) -> list[Path]:
             )
             temporary = Path(temporary_name)
             try:
-                with os.fdopen(descriptor, "wb") as destination_file:
-                    with item.source.open("rb") as source_file:
-                        before = os.fstat(source_file.fileno())
-                        _ensure_source_matches(item, before)
-                        shutil.copyfileobj(source_file, destination_file)
-                        after = os.fstat(source_file.fileno())
-                        _ensure_source_matches(item, after)
+                with (
+                    os.fdopen(descriptor, "wb") as destination_file,
+                    item.source.open("rb") as source_file,
+                ):
+                    before = os.fstat(source_file.fileno())
+                    _ensure_source_matches(item, before)
+                    shutil.copyfileobj(source_file, destination_file)
+                    after = os.fstat(source_file.fileno())
+                    _ensure_source_matches(item, after)
                 if temporary.stat().st_size != item.size_bytes:
                     raise ValueError(f"Image changed while copying: {item.source}")
                 shutil.copystat(item.source, temporary)

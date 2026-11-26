@@ -8,6 +8,29 @@ version = "0.1.0"
 description = "A local-first tool for organizing photo collections."
 readme = "README.md"
 requires-python = ">=3.11"
+license = {file = "LICENSE"}
+keywords = ["photos", "photo-management", "duplicates", "organizer", "local-first"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Environment :: Console",
+    "Intended Audience :: End Users/Desktop",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Multimedia :: Graphics",
+    "Topic :: Utilities",
+]
+
+[project.urls]
+Homepage = "https://github.com/denistanasy10-del/new-github-repo"
+Repository = "https://github.com/denistanasy10-del/new-github-repo"
+Issues = "https://github.com/denistanasy10-del/new-github-repo/issues"
+
+[project.optional-dependencies]
+dev = ["ruff>=0.11,<1"]
 
 [project.scripts]
 frameflow = "frameflow.cli:main"

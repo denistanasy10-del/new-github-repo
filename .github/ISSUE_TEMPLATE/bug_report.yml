@@ -1,0 +1,47 @@
+name: Bug report
+description: Report a reproducible problem with FrameFlow.
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: "Please do not attach private photos or personal metadata."
+  - type: input
+    id: version
+    attributes:
+      label: FrameFlow version
+      placeholder: "0.1.0"
+    validations:
+      required: true
+  - type: input
+    id: python
+    attributes:
+      label: Python version
+      placeholder: "3.12.0"
+    validations:
+      required: true
+  - type: input
+    id: operating-system
+    attributes:
+      label: Operating system
+      placeholder: "Ubuntu 24.04, macOS 15, Windows 11"
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: Include the command you ran and synthetic sample names if relevant.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+    validations:
+      required: true
