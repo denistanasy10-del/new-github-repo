@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-labelledby="title">
+  <title id="title">FrameFlow</title>
+  <defs>
+    <linearGradient id="frameflow-gradient" x1="13" y1="8" x2="113" y2="120" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#7C5CFC"/>
+      <stop offset="1" stop-color="#3478F6"/>
+    </linearGradient>
+    <radialGradient id="lens-gradient" cx="0" cy="0" r="1" gradientTransform="matrix(27 30 -30 27 52 49)" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#B9DEFF"/>
+      <stop offset=".48" stop-color="#698BFF"/>
+      <stop offset="1" stop-color="#3437A8"/>
+    </radialGradient>
+  </defs>
+  <rect x="4" y="4" width="120" height="120" rx="32" fill="url(#frameflow-gradient)"/>
+  <path d="M38 41.5 43.5 33h20l5.5 8.5H87a8 8 0 0 1 8 8v34a8 8 0 0 1-8 8H41a8 8 0 0 1-8-8v-34a8 8 0 0 1 5-7.5Z"
+        fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="5"/>
+  <circle cx="64" cy="66" r="19.5" fill="url(#lens-gradient)" stroke="#fff" stroke-width="4.5"/>
+  <circle cx="64" cy="66" r="8" fill="#EAF4FF" fill-opacity=".92"/>
+  <path d="M79 51h6" stroke="#fff" stroke-linecap="round" stroke-width="4"/>
+</svg>

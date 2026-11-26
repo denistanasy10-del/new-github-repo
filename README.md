@@ -1,33 +1,39 @@
 <div align="center">
 
+<img src="assets/frameflow-mark.svg" width="88" height="88" alt="FrameFlow camera lens logo" />
+
 # FrameFlow
 
-### Spend less time sorting. Spend more time creating.
+**Spend less time sorting. Spend more time creating.**
 
-Local-first tools for finding, reviewing, and safely organizing photo collections.
+An elegant, local-first command-line toolkit for bringing order to your photo library.
 
 [![Tests](https://github.com/denistanasy10-del/new-github-repo/actions/workflows/tests.yml/badge.svg)](https://github.com/denistanasy10-del/new-github-repo/actions/workflows/tests.yml)
 [![Python 3.11+](https://img.shields.io/badge/python-3.11%2B-3776AB?logo=python&logoColor=white)](https://www.python.org/)
 [![License: MIT](https://img.shields.io/badge/license-MIT-2ea44f.svg)](LICENSE)
 
+<br />
+
+[Get started](#get-started) · [Commands](#commands) · [Safety](#safety-by-design) · [Roadmap](#roadmap)
+
 </div>
 
-FrameFlow is a small, privacy-minded command-line app for taking the first steps toward a tidy photo library. It scans image folders, finds byte-for-byte duplicates, and previews date-based organization before copying anything.
+FrameFlow makes the first pass through a messy photo folder feel simple. Scan what you have, find exact duplicates, and plan a clean date-based layout—all from your terminal, with your files staying on your device.
 
-> **Early release:** The CLI described here is implemented. A desktop app, EXIF-based sorting, thumbnails, and a persistent catalog are not available yet.
+> **Early release · CLI available**
+> Desktop browsing, EXIF capture dates, thumbnails, and a persistent catalog are not part of this release.
 
-## What it can do
+## At a glance
 
-- **Scan locally** for common image and camera RAW file extensions, recursively.
-- **Find exact duplicates** with streaming SHA-256 hashes. Files are never removed.
-- **Preview organization** into folders by file modification date.
-- **Copy on confirmation** with collision-safe names. The original library stays untouched.
-- **Keep you in control:** preview is the default, source/destination overlap is rejected, and files changed after preview are not copied.
-- **Stay lightweight:** Python 3.11+, no runtime dependencies, and no network access.
+| Discover | Compare | Organize |
+|:--|:--|:--|
+| Recursively scan common image and camera RAW formats. | Find byte-for-byte duplicates with streaming SHA-256. | Preview a date-based layout, then explicitly copy when ready. |
+
+No cloud account. No runtime dependencies. No moving or deleting originals.
 
 ## Get started
 
-Install from a checkout:
+### Install
 
 ```bash
 git clone https://github.com/denistanasy10-del/new-github-repo.git
@@ -53,6 +59,16 @@ Install FrameFlow:
 python -m pip install -e .
 ```
 
+### Your first scan
+
+```console
+$ frameflow scan ~/Pictures/Weekend
+IMG_1024.JPG    4.8 MB
+IMG_1025.JPG    5.1 MB
+
+Found 2 images (9.9 MB total).
+```
+
 ## Commands
 
 ### Scan a folder
@@ -61,7 +77,7 @@ python -m pip install -e .
 frameflow scan ~/Pictures
 ```
 
-Lists supported files and reports the total image count and size. The scan is read-only and does not follow symbolic links.
+Lists supported files with readable sizes and reports a total. Scanning is read-only and symbolic links are skipped.
 
 ### Find exact duplicates
 
@@ -97,14 +113,16 @@ JPEG, PNG, GIF, BMP, TIFF, WebP, HEIC, and common RAW extensions: ARW, CR2, CR3,
 
 FrameFlow currently identifies files by extension. It does not decode, validate, generate thumbnails, or read image metadata.
 
-## Safety and privacy
+## Safety by design
 
-- Everything runs on your computer; photos and metadata are not uploaded.
-- Scanning and duplicate detection never change files.
-- Organization is a preview by default and copies only when `--apply` is supplied.
-- Original files are never moved or deleted.
-- Existing destination files are not overwritten.
-- Symbolic links are skipped during scans.
+| Default | Guarantee |
+|:--|:--|
+| **Local-only** | No photos or metadata are uploaded. FrameFlow makes no network requests. |
+| **Read-only scan** | Scanning and duplicate detection never change your library. |
+| **Preview first** | Organization shows the proposed layout; `--apply` is required to copy. |
+| **Keep originals** | Files are copied, never moved or deleted. |
+| **No silent overwrite** | Name collisions get a numbered suffix; existing files are left untouched. |
+| **Change-aware** | A source file that changes after preview is rejected during copying. |
 
 Keep a backup before applying bulk file operations, as with any photo workflow.
 
