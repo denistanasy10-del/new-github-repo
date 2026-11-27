@@ -46,7 +46,7 @@ class OrganizationTests(unittest.TestCase):
             plan = plan_organization(source, destination)
 
             self.assertEqual(len(plan), 1)
-            self.assertEqual(plan[0].destination.parent.parent, destination)
+            self.assertEqual(plan[0].destination.parent.parent, destination.resolve())
             self.assertFalse(destination.exists())
 
             copied = copy_organization(plan)
